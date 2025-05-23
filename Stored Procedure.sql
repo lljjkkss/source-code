@@ -655,6 +655,8 @@ CREATE PROCEDURE GetOrderByFilter
     @Status NVARCHAR(20)
 AS
 BEGIN
+    DECLARE @StartDateAdd DATETIME = DATEADD(SECOND, -1, @StartDate);
+    DECLARE @EndDateAdd DATETIME = DATEADD(DAY, 1, @EndDate);
     DECLARE @SQL NVARCHAR(MAX)
     SET @SQL = N'
         SELECT Orders.Id, Account.Name, OrderDate, Status, TotalPrice, ShippingAddress, PromotionId,
@@ -673,11 +675,11 @@ BEGIN
     IF @ProductName IS NOT NULL AND DATALENGTH(@ProductName) > 0
         SET @SQL += N' AND Product.Name LIKE N''%'' + @ProductName + N''%'''
 
-    IF @StartDate IS NOT NULL
-        SET @SQL += N' AND Orders.OrderDate > DATEADD(SECOND, -1, @StartDate)'
+ IF @StartDate IS NOT NULL
+        SET @SQL += N' AND Orders.OrderDate > @StartDateAdd';
 
     IF @EndDate IS NOT NULL
-        SET @SQL += N' AND Orders.OrderDate < DATEADD(DAY, 1, @EndDate)'
+        SET @SQL += N' AND Orders.OrderDate < @EndDateAdd';
 
     IF @Status IS NOT NULL AND DATALENGTH(@Status) > 0
         SET @SQL += N' AND Orders.Status = @Status'
@@ -698,7 +700,7 @@ BEGIN
     -- Thực thi truy vấn động
     EXEC sp_executesql 
         @stmt = @SQL,
-        @params = N'@AccountName NVARCHAR(255), @ProductName NVARCHAR(255), @StartDate DATETIME, @EndDate DATETIME, @Status NVARCHAR(20)',
+        @params = N'@AccountName NVARCHAR(255), @ProductName NVARCHAR(255), @StartDateAdd DATETIME, @EndDateAdd DATETIME, @Status NVARCHAR(20)',
         @AccountName = @AccountName,
         @ProductName = @ProductName,
         @StartDate = @StartDate,
