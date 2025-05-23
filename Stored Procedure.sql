@@ -703,9 +703,9 @@ BEGIN
         @params = N'@AccountName NVARCHAR(255), @ProductName NVARCHAR(255), @StartDateAdd DATETIME, @EndDateAdd DATETIME, @Status NVARCHAR(20)',
         @AccountName = @AccountName,
         @ProductName = @ProductName,
-        @StartDate = @StartDate,
-        @EndDate = @EndDate,
-        @Status = @Status
+        @StartDateAdd = @StartDateAdd,
+        @EndDateAdd = @EndDateAdd,
+        @Status = @Status;
 END
 GO
 
